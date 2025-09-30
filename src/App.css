@@ -14,7 +14,6 @@ html, body, #root {
 .canvas-area {
   flex: 1;
   height: 100%;
-  position: relative;
 }
 
 .sidebar {

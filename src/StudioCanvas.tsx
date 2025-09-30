@@ -4,10 +4,7 @@ import { useGLTF } from "@react-three/drei";
 import { OrbitControls } from "@react-three/drei";
 import { Items } from "./Items";
 
-type StudioCanvasProps = {
-  selectedId: number | null;
-  setSelectedId: (id: number | null) => void;
-};
+
 
 export function Room() {
   const { scene } = useGLTF("src/assets/room.glb");
@@ -15,7 +12,14 @@ export function Room() {
   return <primitive object={scene} />;
 }
 
-export function StudioCanvas({ selectedId, setSelectedId }: StudioCanvasProps) {
+type StudioCanvasProps = {
+  items: { id: number; position: [number, number, number] }[];
+  selectedId: number | null;
+  setSelectedId: (id: number | null) => void;
+  updateItemPosition: (id: number, pos: [number, number, number]) => void;
+};
+
+export function StudioCanvas({ items,selectedId, setSelectedId, updateItemPosition}: StudioCanvasProps) {
   return (
     <Canvas
       shadows
@@ -28,11 +32,7 @@ export function StudioCanvas({ selectedId, setSelectedId }: StudioCanvasProps) {
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
         <gridHelper args={[20, 20]} />
         <Room />
-        <Items
-          count={200}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-        />
+        <Items items={items} selectedId={selectedId} setSelectedId={setSelectedId}   updateItemPosition={updateItemPosition} />
         <OrbitControls
           makeDefault
           minPolarAngle={0} 
