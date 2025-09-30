@@ -11,9 +11,12 @@ export function Room() {
 
 export function StudioCanvas() {
   return (
-    <Canvas shadows camera={{ position: [0, 2, 10] }}>
+    <Canvas shadows gl={{ antialias: true }}
+// color/tonemapping defaults left as-is
+
+camera={{ position: [3, 3, 6], fov: 50 }}>
       <Suspense fallback={null}>        
-        <directionalLight position={[5, 5, 5]} intensity={1} />
+        <directionalLight position={[5, 5, 5]} intensity={1} castShadow/>
   <Room />
       </Suspense>
     </Canvas>
