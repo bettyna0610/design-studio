@@ -1,17 +1,15 @@
-
-import './App.css'
+import "./App.css";
+import { StudioCanvas } from "./StudioCanvas";
 
 function App() {
-  
-
   return (
-    <>
-      
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app">
+      <div className="canvas-area">
+        <StudioCanvas />
+      </div>
+      <div className="sidebar"></div>
+    </div>
+  );
 }
 
-export default App
+export default App;
