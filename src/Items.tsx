@@ -1,5 +1,7 @@
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo, useEffect, useState } from "react";
 import * as THREE from "three";
+import { TransformControls } from "@react-three/drei"; 
+
 
 
 type ItemsProps = {
@@ -10,7 +12,7 @@ type ItemsProps = {
 
 export function Items({ count = 200, selectedId, setSelectedId }: ItemsProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null!);
-  const highlightRef = useRef<THREE.Mesh>(null!);
+  const selectedRef = useRef<THREE.Mesh>(null!);
 
   const geometry = useMemo(() => new THREE.BoxGeometry(0.2, 0.2, 0.2), []);
   const material = useMemo(
@@ -18,18 +20,20 @@ export function Items({ count = 200, selectedId, setSelectedId }: ItemsProps) {
     []
   );
 
-  const positions = useMemo(() => {
-    const arr: THREE.Matrix4[] = [];
-    for (let i = 0; i < count; i++) {
-      const x = (Math.random() - 0.5) * 8;
-      const y = 0.1;
-      const z = (Math.random() - 0.5) * 8;
-      const matrix = new THREE.Matrix4();
-      matrix.setPosition(x, y, z);
-      arr.push(matrix);
-    }
-    return arr;
-  }, [count]);
+ const [positions, setPositions] = useState<THREE.Matrix4[]>([]);
+
+useEffect(() => {
+  const arr: THREE.Matrix4[] = [];
+  for (let i = 0; i < count; i++) {
+    const x = (Math.random() - 0.5) * 8;
+    const y = 0.1;
+    const z = (Math.random() - 0.5) * 8;
+    const matrix = new THREE.Matrix4();
+    matrix.setPosition(x, y, z);
+    arr.push(matrix);
+  }
+  setPositions(arr);
+}, [count]);
 
   
 
@@ -38,27 +42,32 @@ export function Items({ count = 200, selectedId, setSelectedId }: ItemsProps) {
     setSelectedId(e.instanceId ?? null);
   };
 
+  const handleTransformEnd = () => {
+    if (selectedId !== null && selectedRef.current) {
+      const newMatrix = new THREE.Matrix4();
+      newMatrix.setPosition(selectedRef.current.position);
+      const newPositions = [...positions];
+      newPositions[selectedId] = newMatrix;
+      setPositions(newPositions);
+    }
+  };
+
   useEffect(() => {
-    positions.forEach((matrix, i) => {
-      meshRef.current.setMatrixAt(i, matrix);
-    });
-    meshRef.current.instanceMatrix.needsUpdate = true;
-  }, [positions]);
+  if (!meshRef.current || positions.length === 0) return;
+  positions.forEach((matrix, i) => {
+    meshRef.current.setMatrixAt(i, matrix);
+  });
+  meshRef.current.instanceMatrix.needsUpdate = true;
+}, [positions]);
+
 
   useEffect(() => {
     if (selectedId !== null && positions[selectedId]) {
-      const matrix = new THREE.Matrix4();
-      meshRef.current.getMatrixAt(selectedId, matrix);
-
       const pos = new THREE.Vector3();
-      const quat = new THREE.Quaternion();
-      const scale = new THREE.Vector3();
-      matrix.decompose(pos, quat, scale);
-
-      highlightRef.current.position.copy(pos);
-      highlightRef.current.visible = true;
-    } else {
-      highlightRef.current.visible = false;
+      positions[selectedId].decompose(pos, new THREE.Quaternion(), new THREE.Vector3());
+      if (selectedRef.current) {
+        selectedRef.current.position.copy(pos);
+      }
     }
   }, [selectedId, positions]);
 
@@ -71,10 +80,19 @@ export function Items({ count = 200, selectedId, setSelectedId }: ItemsProps) {
         castShadow
         receiveShadow
       />
-      <mesh ref={highlightRef} scale={1.3} visible={false}>
-        <boxGeometry args={[0.2, 0.2, 0.2]} />
-        <meshBasicMaterial color="yellow" transparent opacity={0.6} />
-      </mesh>
+          {selectedId !== null && (
+        <TransformControls
+          object={selectedRef.current}
+          mode="translate"
+          onMouseUp={handleTransformEnd}
+          makeDefault={false}
+        >
+          <mesh ref={selectedRef}>
+            <boxGeometry args={[0.2, 0.2, 0.2]} />
+            <meshStandardMaterial color="yellow" />
+          </mesh>
+        </TransformControls>
+      )}
     </>
   );
 }

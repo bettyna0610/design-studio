@@ -10,7 +10,7 @@ type StudioCanvasProps = {
 };
 
 export function Room() {
-  const { scene } = useGLTF("src/assets/room_v1.glb");
+  const { scene } = useGLTF("src/assets/room.glb");
 
   return <primitive object={scene} />;
 }
@@ -26,6 +26,7 @@ export function StudioCanvas({ selectedId, setSelectedId }: StudioCanvasProps) {
     >
       <Suspense fallback={null}>
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
+        <gridHelper args={[20, 20]} />
         <Room />
         <Items
           count={200}
