@@ -20,7 +20,7 @@ type StudioCanvasProps = {
   updateItemPosition?: (id: number, pos: [number, number, number]) => void;
 };
 
-export function StudioCanvas({ items,selectedId, setSelectedId, updateItemPosition}: StudioCanvasProps) {
+export function StudioCanvas({ items,selectedId, setSelectedId}: StudioCanvasProps) {
   return (
     <Canvas
       shadows
