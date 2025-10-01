@@ -17,10 +17,10 @@ type StudioCanvasProps = {
   items: Item[];
   selectedId: number | null;
   setSelectedId: (id: number | null) => void;
-  updateItemPosition?: (id: number, pos: [number, number, number]) => void;
+  updateItemPosition: (id: number, pos: [number, number, number]) => void;
 };
 
-export function StudioCanvas({ items,selectedId, setSelectedId}: StudioCanvasProps) {
+export function StudioCanvas({ items,selectedId, setSelectedId, updateItemPosition}: StudioCanvasProps) {
   return (
     <Canvas
       shadows
@@ -34,8 +34,7 @@ export function StudioCanvas({ items,selectedId, setSelectedId}: StudioCanvasPro
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
         <gridHelper args={[20, 20]} />
         <Room />
-        {/* <Items items={items}  selectedId={selectedId} setSelectedId={setSelectedId}   updateItemPosition={updateItemPosition} />  */}
-        <Items items={items}  selectedId={selectedId} setSelectedId={setSelectedId} /> 
+        <Items items={items}  selectedId={selectedId} setSelectedId={setSelectedId} updateItemPosition={updateItemPosition}/> 
         <OrbitControls
           makeDefault
           minPolarAngle={0} 
