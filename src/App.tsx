@@ -1,9 +1,4 @@
-
-
-
-
-
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { StudioCanvas } from "./StudioCanvas";
 import { Sidebar } from "./Sidebar";
 import type { Item } from "./types";
@@ -20,15 +15,21 @@ export default function App() {
       arr.push({
         id: i,
         position: [x, y, z],
-        color: "#ffffff", // fehér kezdőszín
+        color: "#ffffff", 
       });
     }
     return arr;
   });
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const controlsRef = useRef<any>(null); 
 
-  
+  const resetCamera = () => {
+    if (controlsRef.current) {
+      controlsRef.current.reset();
+    }
+  };
+
   const addItem = () => {
     const id = items.length > 0 ? items[items.length - 1].id + 1 : 0;
     const x = (Math.random() - 0.5) * 8;
@@ -42,7 +43,6 @@ export default function App() {
     if (selectedId === id) setSelectedId(null);
   };
 
-  
   const updateItemPosition = (id: number, pos: [number, number, number]) => {
     setItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, position: pos } : item))
@@ -50,13 +50,11 @@ export default function App() {
   };
 
   const updateItemColor = (id: number, color: string) => {
-  setItems((prev) =>
-    prev.map((item) =>
-      item.id === id ? { ...item, color } : item
-    )
-  );
-  console.log("updateItemColor called for id:", id, "new color:", color);
-};
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, color } : item))
+    );
+    console.log("updateItemColor called for id:", id, "new color:", color);
+  };
 
   return (
     <div className="app">
@@ -66,6 +64,7 @@ export default function App() {
           selectedId={selectedId}
           setSelectedId={setSelectedId}
           updateItemPosition={updateItemPosition}
+          onControlsReady={(controls) => (controlsRef.current = controls)}
         />
       </div>
       <Sidebar
@@ -73,8 +72,9 @@ export default function App() {
         selectedId={selectedId}
         setSelectedId={setSelectedId}
         updateItemColor={updateItemColor}
-         addItem={addItem}
+        addItem={addItem}
         deleteItem={deleteItem}
+        resetCamera={resetCamera} 
       />
     </div>
   );

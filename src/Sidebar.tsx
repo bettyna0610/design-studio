@@ -9,6 +9,7 @@ type SidebarProps = {
   updateItemColor: (id: number, color: string) => void;
   addItem: () => void;
   deleteItem: (id: number) => void;
+  resetCamera: () => void;
 };
 
 export function Sidebar({
@@ -17,7 +18,8 @@ export function Sidebar({
   setSelectedId,
   updateItemColor,
   addItem,
-  deleteItem
+  deleteItem,
+  resetCamera,
 }: SidebarProps) {
   const selectedItem = items.find((it) => it.id === selectedId);
 
@@ -66,6 +68,11 @@ export function Sidebar({
           </p>
         </div>
       )}
+      <div style={{ marginTop: "auto", paddingTop: "1rem" }}>
+        <button onClick={resetCamera} style={{ width: "100%" }}>
+          Reset Camera
+        </button>
+      </div>
     </div>
   );
 }
