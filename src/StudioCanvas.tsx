@@ -5,10 +5,8 @@ import { OrbitControls } from "@react-three/drei";
 import { Items } from "./Items";
 import type { Item } from "./types";
 
-
-
 export function Room() {
-  const { scene } = useGLTF("src/assets/room.glb");
+  const { scene } = useGLTF("/room.glb");
 
   return <primitive object={scene} />;
 }
@@ -20,7 +18,12 @@ type StudioCanvasProps = {
   updateItemPosition: (id: number, pos: [number, number, number]) => void;
 };
 
-export function StudioCanvas({ items,selectedId, setSelectedId,updateItemPosition}: StudioCanvasProps) {
+export function StudioCanvas({
+  items,
+  selectedId,
+  setSelectedId,
+  updateItemPosition,
+}: StudioCanvasProps) {
   return (
     <Canvas
       shadows
@@ -34,12 +37,17 @@ export function StudioCanvas({ items,selectedId, setSelectedId,updateItemPositio
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
         <gridHelper args={[20, 20]} />
         <Room />
-        <Items items={items}  selectedId={selectedId} setSelectedId={setSelectedId} updateItemPosition={updateItemPosition}/> 
+        <Items
+          items={items}
+          selectedId={selectedId}
+          setSelectedId={setSelectedId}
+          updateItemPosition={updateItemPosition}
+        />
         <OrbitControls
           makeDefault
-          minPolarAngle={0} 
-          maxPolarAngle={Math.PI / 2} 
-          minDistance={2} 
+          minPolarAngle={0}
+          maxPolarAngle={Math.PI / 2}
+          minDistance={2}
           maxDistance={20}
         />
       </Suspense>
