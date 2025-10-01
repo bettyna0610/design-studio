@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { useGLTF } from "@react-three/drei";
 import { OrbitControls } from "@react-three/drei";
 import { Items } from "./Items";
+import type { Item } from "./types";
 
 
 
@@ -13,10 +14,10 @@ export function Room() {
 }
 
 type StudioCanvasProps = {
-  items: { id: number; position: [number, number, number] }[];
+  items: Item[];
   selectedId: number | null;
   setSelectedId: (id: number | null) => void;
-  updateItemPosition: (id: number, pos: [number, number, number]) => void;
+  updateItemPosition?: (id: number, pos: [number, number, number]) => void;
 };
 
 export function StudioCanvas({ items,selectedId, setSelectedId, updateItemPosition}: StudioCanvasProps) {
@@ -29,10 +30,12 @@ export function StudioCanvas({ items,selectedId, setSelectedId, updateItemPositi
       camera={{ position: [3, 3, 6], fov: 50 }}
     >
       <Suspense fallback={null}>
+        <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
         <gridHelper args={[20, 20]} />
         <Room />
-        <Items items={items} selectedId={selectedId} setSelectedId={setSelectedId}   updateItemPosition={updateItemPosition} />
+        {/* <Items items={items}  selectedId={selectedId} setSelectedId={setSelectedId}   updateItemPosition={updateItemPosition} />  */}
+        <Items items={items}  selectedId={selectedId} setSelectedId={setSelectedId} /> 
         <OrbitControls
           makeDefault
           minPolarAngle={0} 
