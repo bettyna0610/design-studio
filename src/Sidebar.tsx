@@ -32,7 +32,7 @@ export function Sidebar({
           onClick={() => deleteItem(selectedId)}
           style={{ marginLeft: "0.5rem" }}
         >
-          Delete Selected
+          Delete Item
         </button>
       )}
       <h3>Items</h3>
