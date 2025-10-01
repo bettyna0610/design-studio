@@ -1,8 +1,11 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useRef } from "react";
-import { useGLTF, OrbitControls } from "@react-three/drei";
+import { Suspense } from "react";
+import { useGLTF } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Items } from "./Items";
 import type { Item } from "./types";
+
+
 
 export function Room() {
   const { scene } = useGLTF("src/assets/room.glb");
@@ -15,23 +18,9 @@ type StudioCanvasProps = {
   selectedId: number | null;
   setSelectedId: (id: number | null) => void;
   updateItemPosition: (id: number, pos: [number, number, number]) => void;
-  onControlsReady?: (controls: any) => void; // 🔑 pass back controls ref
 };
 
-export function StudioCanvas({
-  items,
-  selectedId,
-  setSelectedId,
-  updateItemPosition,
-  onControlsReady, //added
-}: StudioCanvasProps) {
-  const controlsRef = useRef<any>(null); //added
-
-  // Expose controlsRef to parent
-  if (onControlsReady && controlsRef.current) {
-    onControlsReady(controlsRef.current);
-  }
-
+export function StudioCanvas({ items,selectedId, setSelectedId,updateItemPosition}: StudioCanvasProps) {
   return (
     <Canvas
       shadows
@@ -45,19 +34,12 @@ export function StudioCanvas({
         <directionalLight position={[5, 5, 5]} intensity={1} castShadow />
         <gridHelper args={[20, 20]} />
         <Room />
-
-        <Items
-          items={items}
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          updateItemPosition={updateItemPosition}
-        />
+        <Items items={items}  selectedId={selectedId} setSelectedId={setSelectedId} updateItemPosition={updateItemPosition}/> 
         <OrbitControls
-          ref={controlsRef}
           makeDefault
-          minPolarAngle={0}
-          maxPolarAngle={Math.PI / 2}
-          minDistance={2}
+          minPolarAngle={0} 
+          maxPolarAngle={Math.PI / 2} 
+          minDistance={2} 
           maxDistance={20}
         />
       </Suspense>

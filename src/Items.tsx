@@ -11,63 +11,53 @@ type ItemsProps = {
   updateItemPosition: (id: number, pos: [number, number, number]) => void;
 };
 
-export function Items({
-  items,
-  selectedId,
-  setSelectedId,
-  updateItemPosition,
-}: ItemsProps) {
+export function Items({ items, selectedId, setSelectedId,updateItemPosition }: ItemsProps) {
   const meshRef = useRef<THREE.InstancedMesh>(null!);
   const selectedRef = useRef<THREE.Mesh>(null!);
 
   const geometry = useMemo(() => new THREE.BoxGeometry(0.2, 0.2, 0.2), []);
   const material = useMemo(
-    () => new THREE.MeshStandardMaterial({ vertexColors: true }),
-    []
-  );
+  () => new THREE.MeshBasicMaterial({ color: "white" }),
+  []
+);
 
-  useEffect(() => {
-    if (!meshRef.current) return;
-
-    if (!meshRef.current.geometry.getAttribute("instanceColor")) {
-      const colors = new Float32Array(items.length * 3);
-      meshRef.current.geometry.setAttribute(
-        "instanceColor",
-        new THREE.InstancedBufferAttribute(colors, 3)
-      );
-    }
-
-    const color = new THREE.Color();
-
-    items.forEach((item, i) => {
-      if (item.id === 5) {
-        console.log("Item id 5 color:", item.color);
-      }
-
-     
-      const matrix = new THREE.Matrix4();
-      matrix.setPosition(...item.position);
-      meshRef.current.setMatrixAt(i, matrix);
-
-     
-      color.set(item.color);
-      meshRef.current.setColorAt(i, color);
-    });
-
-    meshRef.current.count = items.length;
-    meshRef.current.instanceMatrix.needsUpdate = true;
-    if (meshRef.current.instanceColor) {
-      meshRef.current.instanceColor.needsUpdate = true;
-    }
-  }, [items]);
-
-  useFrame(() => {
+useFrame(() => {
   if (selectedId !== null && selectedRef.current) {
     selectedRef.current.position.y = 0.1; // ✅ glue to floor
   }
 });
 
-  
+  useEffect(() => {
+    const mesh = meshRef.current;
+    if (!mesh) return;
+
+    if (!mesh.instanceColor || mesh.instanceColor.count !== items.length) {
+      mesh.instanceColor = new THREE.InstancedBufferAttribute(
+        new Float32Array(items.length * 3),
+        3
+      );
+      mesh.geometry.setAttribute("instanceColor", mesh.instanceColor);
+      console.log("🔧 instanceColor allocated", mesh.instanceColor.count);
+    }
+
+    const matrix = new THREE.Matrix4();
+    const color = new THREE.Color();
+
+    items.forEach((item, i) => {
+      matrix.setPosition(...item.position);
+      mesh.setMatrixAt(i, matrix);
+
+      color.set(item.color);
+      mesh.setColorAt(i, color);
+    });
+
+    mesh.count = items.length;
+    mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+
+    console.log("✅ Items updated, first color:", items[0]?.color);
+  }, [items]);
+
   useEffect(() => {
     if (selectedId !== null) {
       const selected = items.find((it) => it.id === selectedId);
@@ -96,7 +86,7 @@ export function Items({
   };
 
   return (
-    <>
+     <>
       <instancedMesh
         ref={meshRef}
         args={[geometry, material, items.length]}

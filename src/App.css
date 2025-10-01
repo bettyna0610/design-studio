@@ -6,40 +6,21 @@ html, body, #root {
 
 .app {
   display: flex;
-  height: 100%;
-  width: 100%;
+  height: 100%;    
+  width: 100%;   
   overflow: hidden;
-  position: relative;
 }
 
 .canvas-area {
   flex: 1;
   height: 100%;
-  position: relative;
-  z-index: 0; /* mindig háttérben */
 }
 
 .sidebar {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  width: 300px;
+  width: 350px;
   background: #f7f7f7;
   border-left: 1px solid #ccc;
   padding: 1rem;
   overflow-y: auto;
-  z-index: 1000; /* mindig fölötte a Canvasnak */;
-  color: black;
 }
 
-.sidebar h3, 
-.sidebar h4 {
-  margin-top: 0;
-}
-
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
